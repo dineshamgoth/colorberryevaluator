@@ -1,0 +1,300 @@
+﻿<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Evaluate</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Custom focus styles for better accessibility and aesthetics */
+        .custom-focus-ring:focus,
+        .custom-select-trigger:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.4);
+            border-color: #818cf8;
+        }
+        /* Style for invalid fields */
+        .field-error {
+            border-color: #ef4444 !important; /* red-500 */
+        }
+        /* Smooth transition for the progress ring */
+        #progress-ring {
+            transition: stroke-dashoffset 1s linear;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <div class="min-h-screen flex items-center justify-center p-4"
+         style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)">
+        <div class="w-full max-w-lg mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12 space-y-8">
+            <!-- Header -->
+            <header id="formHeader" class="text-center">
+                <p class="text-2xl md:text-3xl font-semibold text-gray-700">Who are we evaluating?</p>
+            </header>
+            <!-- Main Content Area: Wraps form and timer for smoother transition -->
+            <div id="mainContent">
+                <!-- Evaluation Form -->
+                <form id="evaluationForm"
+                      action="@Url.Action("Evaluate", "Home")"
+                      method="POST"
+                      class="space-y-2"
+                      novalidate>
+                    <!-- Person's Name -->
+                    <div>
+                        <label for="personName" class="block text-base font-medium text-gray-600 mb-1">Person's Name</label>
+                        <input type="text"
+                               id="personName"
+                               name="PersonName"
+                               required
+                               class="w-full px-4 py-3 bg-gray-100 border-2 border-transparent rounded-lg text-gray-800 focus:bg-white custom-focus-ring transition-all duration-300" />
+                        <div id="nameError" class="text-red-500 text-sm mt-1 h-5"></div>
+                    </div>
+                    <!-- Years Known -->
+                    <div>
+                        <label for="yearsKnown" class="block text-base font-medium text-gray-600 mb-1">Years known</label>
+                        <input type="number"
+                               id="yearsKnown"
+                               name="YearsKnown"
+                               required
+                               class="w-full px-4 py-3 bg-gray-100 border-2 border-transparent rounded-lg text-gray-800 focus:bg-white custom-focus-ring transition-all duration-300" />
+                        <div id="yearsError" class="text-red-500 text-sm mt-1 h-5"></div>
+                    </div>
+                    <!-- Interaction Frequency Dropdown -->
+                    <div>
+                        <div class="relative">
+                            <label for="interaction" class="block text-base font-medium text-gray-600 mb-1">How often do you interact?</label>
+                            <select id="interaction" name="Interaction" required class="hidden">
+                                <option value="" disabled selected>Select frequency</option>
+                                <option value="1">Daily</option>
+                                <option value="2">Weekly</option>
+                                <option value="3">Monthly</option>
+                                <option value="4">Rarely</option>
+                            </select>
+                        </div>
+                        <div id="interactionError" class="text-red-500 text-sm mt-1 h-5"></div>
+                    </div>
+                    <!-- Gender Dropdown -->
+                    <div>
+                        <div class="relative">
+                            <label for="gender" class="block text-base font-medium text-gray-600 mb-1">Gender</label>
+                            <select id="gender" name="Gender" required class="hidden">
+                                <option value="" disabled selected>Select gender</option>
+                                <option value="0">Male</option>
+                                <option value="1">Female</option>
+                            </select>
+                        </div>
+                        <div id="genderError" class="text-red-500 text-sm mt-1 h-5"></div>
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="text-center pt-4">
+                        <button type="submit"
+                                class="bg-transparent border-2 border-purple-600 text-purple-600 font-medium py-3 px-12 rounded-xl hover:shadow-lg hover:shadow-gray-300/50 focus:outline-none focus:ring-4 focus:ring-purple-300 transition-all duration-300 ease-in-out text-xl">
+                            Proceed
+                        </button>
+                    </div>
+                </form>
+                <!-- Timer Container -->
+                <div id="timerWrapper" class="hidden text-center">
+                    <p class="text-xl text-gray-600 mb-6">Before we evaluate, relax and calm your mind. Take a deep breath.</p>
+                    <div class="relative w-56 h-56 mx-auto">
+                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                            <!-- Define the gradient for the progress ring -->
+                            <defs>
+                                <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#34D399;" />
+                                    <stop offset="100%" style="stop-color:#10B981;" />
+                                </linearGradient>
+                            </defs>
+                            <!-- Background circle -->
+                            <circle class="text-gray-200"
+                                    stroke-width="10"
+                                    cx="50"
+                                    cy="50"
+                                    r="45"
+                                    fill="transparent" />
+                            <!-- Progress circle -->
+                            <circle id="progress-ring"
+                                    stroke="url(#timerGradient)"
+                                    stroke-width="10"
+                                    cx="50"
+                                    cy="50"
+                                    r="45"
+                                    fill="transparent"
+                                    stroke-linecap="round"
+                                    transform="rotate(-90 50 50)" />
+                        </svg>
+                        <div id="timerDisplay"
+                             class="absolute inset-0 flex items-center justify-center text-3xl font-bold text-green-600">
+                            03:00
+                        </div>
+                    </div>
+                    <p id="timerMessage" class="text-lg text-gray-600 h-6 mt-6"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Element References ---
+            const form = document.getElementById('evaluationForm');
+            const formHeader = document.getElementById('formHeader');
+            const mainContent = document.getElementById('mainContent');
+            const timerWrapper = document.getElementById('timerWrapper');
+            const timerDisplay = document.getElementById('timerDisplay');
+            const timerMessage = document.getElementById('timerMessage');
+            const progressRing = document.getElementById('progress-ring');
+            const personName = document.getElementById('personName');
+            const yearsKnown = document.getElementById('yearsKnown');
+            const interaction = document.getElementById('interaction');
+            const gender = document.getElementById('gender');
+            const nameError = document.getElementById('nameError');
+            const yearsError = document.getElementById('yearsError');
+            const interactionError = document.getElementById('interactionError');
+            const genderError = document.getElementById('genderError');
+            // --- Custom Dropdown Implementation ---
+            const createCustomDropdown = (selectElement) => {
+                const selectWrapper = selectElement.parentElement;
+                const trigger = document.createElement('div');
+                trigger.setAttribute('tabindex', '0');
+                trigger.classList.add(
+                    'w-full',
+                    'px-4',
+                    'py-3',
+                    'bg-gray-100',
+                    'border-2',
+                    'border-transparent',
+                    'rounded-lg',
+                    'text-gray-800',
+                    'focus:bg-white',
+                    'custom-focus-ring',
+                    'transition-all',
+                    'duration-300',
+                    'cursor-pointer',
+                    'flex',
+                    'justify-between',
+                    'items-center'
+                );
+                trigger.innerHTML = `<span>${selectElement.options[selectElement.selectedIndex].text}</span><svg fill="gray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>`;
+                const optionsWrapper = document.createElement('div');
+                optionsWrapper.classList.add(
+                    'absolute',
+                    'w-full',
+                    'mt-1',
+                    'bg-white',
+                    'rounded-lg',
+                    'shadow-lg',
+                    'overflow-hidden',
+                    'z-10',
+                    'hidden'
+                );
+                Array.from(selectElement.options).forEach((option) => {
+                    if (option.disabled) return;
+                    const customOption = document.createElement('div');
+                    customOption.textContent = option.text;
+                    customOption.classList.add('px-4', 'py-3', 'cursor-pointer', 'hover:bg-gray-100');
+                    customOption.dataset.value = option.value;
+                    customOption.addEventListener('click', () => {
+                        selectElement.value = option.value;
+                        const triggerSpan = trigger.querySelector('span');
+                        triggerSpan.textContent = option.text;
+                        triggerSpan.classList.remove('text-gray-400');
+                        optionsWrapper.classList.add('hidden');
+                        selectElement.dispatchEvent(new Event('change'));
+                    });
+                    optionsWrapper.appendChild(customOption);
+                });
+                trigger.addEventListener('click', () => optionsWrapper.classList.toggle('hidden'));
+                trigger.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') optionsWrapper.classList.toggle('hidden');
+                });
+                selectWrapper.appendChild(trigger);
+                selectWrapper.appendChild(optionsWrapper);
+                if (selectElement.value === '') {
+                    trigger.querySelector('span').classList.add('text-gray-400');
+                }
+            };
+            document.querySelectorAll('select').forEach(createCustomDropdown);
+            window.addEventListener('click', function (e) {
+                document.querySelectorAll('.relative').forEach((container) => {
+                    if (!container.contains(e.target)) {
+                        const optionsWrapper = container.querySelector('.absolute');
+                        if (optionsWrapper) optionsWrapper.classList.add('hidden');
+                    }
+                });
+            });
+            // --- Form Validation ---
+            const showError = (input, errorElement, message) => {
+                const el = input.closest('.relative')?.querySelector('[tabindex="0"]') || input;
+                el.classList.add('field-error');
+                errorElement.textContent = message;
+            };
+            const clearError = (input, errorElement) => {
+                const el = input.closest('.relative')?.querySelector('[tabindex="0"]') || input;
+                el.classList.remove('field-error');
+                errorElement.textContent = '';
+            };
+            const fieldsToValidate = [
+                { el: personName, errEl: nameError, msg: "Person's name is required" },
+                { el: yearsKnown, errEl: yearsError, msg: "Years known is required" },
+                { el: interaction, errEl: interactionError, msg: 'Please select an interaction frequency' },
+                { el: gender, errEl: genderError, msg: 'Please select a gender' }
+            ];
+            fieldsToValidate.forEach(({ el, errEl, msg }) => {
+                const eventType = el.tagName === 'SELECT' ? 'change' : 'input';
+                el.addEventListener(eventType, () => clearError(el, errEl));
+            });
+            // --- Timer Logic ---
+            let timerInterval;
+            const startTimer = (duration) => {
+                const radius = progressRing.r.baseVal.value;
+                const circumference = 2 * Math.PI * radius;
+                progressRing.style.strokeDasharray = circumference;
+                progressRing.style.strokeDashoffset = 0; // Start with full circle
+                let timeLeft = duration;
+                timerInterval = setInterval(() => {
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(
+                        2,
+                        '0'
+                    )}`;
+                    const offset = circumference - (timeLeft / duration) * circumference;
+                    progressRing.style.strokeDashoffset = offset;
+                    if (--timeLeft < 0) {
+                        clearInterval(timerInterval);
+                        // Submit the form programmatically when timer ends
+                        form.submit();
+                    }
+                }, 1000);
+            };
+            // --- Form Submission Handler ---
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                let isValid = true;
+                fieldsToValidate.forEach(({ el, errEl, msg }) => {
+                    if (el.value.trim() === '') {
+                        showError(el, errEl, msg);
+                        isValid = false;
+                    } else {
+                        clearError(el, errEl);
+                    }
+                });
+                if (!isValid) return;
+                // Hide form and show timer
+                form.classList.add('hidden');
+                formHeader.classList.add('hidden');
+                timerWrapper.classList.remove('hidden');
+                startTimer(9); // 3 minutes
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+﻿@model UserRegistrationVM
+
+@{
+    ViewData["Title"] = "Sign Up";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - Sign Up</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Custom focus styles for better accessibility and aesthetics */
+        .custom-focus-ring:focus, .custom-select-trigger:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.4);
+            border-color: #818cf8;
+        }
+
+        /* Style for invalid fields */
+        .field-error {
+            border-color: #ef4444 !important; /* red-500 */
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="min-h-screen flex items-center justify-center p-4" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+        <div class="w-full max-w-lg mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12 space-y-8">
+
+            <header class="text-center">
+                <p class="text-2xl md:text-3xl font-semibold text-gray-700">Create a New Account</p>
+            </header>
+
+            <form id="signupForm" asp-controller="UserData" asp-action="Register" method="post" class="space-y-2" novalidate>
+                <div class="mb-4">
+                    <label asp-for="FullName" class="block text-base font-medium text-gray-600 mb-1">Full Name</label>
+                    <input asp-for="FullName" type="text" id="fullName" name="FullName" class="w-full px-4 py-3 bg-gray-100 border-2 border-transparent rounded-lg text-gray-800 focus:bg-white custom-focus-ring transition-all duration-300" required>
+                    <div id="fullName-error" class="text-red-500 text-sm mt-1 h-5"></div>
+                </div>
+                <div class="mb-4">
+                    <label asp-for="Username" class="block text-base font-medium text-gray-600 mb-1">Username</label>
+                    <input asp-for="Username" type="text" id="username" name="Username" class="w-full px-4 py-3 bg-gray-100 border-2 border-transparent rounded-lg text-gray-800 focus:bg-white custom-focus-ring transition-all duration-300" required>
+                    <div id="username-error" class="text-red-500 text-sm mt-1 h-5"></div>
+                </div>
+                <div class="mb-4">
+                    <div class="relative">
+                        <label asp-for="Gender" class="block text-base font-medium text-gray-600 mb-1">Gender</label>
+                        <select asp-for="Gender" id="gender" name="Gender" class="hidden" required>
+                            <option value="" disabled selected>-- Select Gender --</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    <div id="gender-error" class="text-red-500 text-sm mt-1 h-5"></div>
+                </div>
+                <div class="mb-4">
+                    <label asp-for="Email" class="block text-base font-medium text-gray-600 mb-1">Email (Optional)</label>
+                    <input asp-for="Email" type="email" id="email" name="Email" class="w-full px-4 py-3 bg-gray-100 border-2 border-transparent rounded-lg text-gray-800 focus:bg-white custom-focus-ring transition-all duration-300">
+                    <div id="email-error" class="text-red-500 text-sm mt-1 h-5"></div>
+                </div>
+                <div class="mb-4">
+                    <label asp-for="Password" class="block text-base font-medium text-gray-600 mb-1">Password</label>
+                    <input asp-for="Password" type="password" id="password" name="Password" class="w-full px-4 py-3 bg-gray-100 border-2 border-transparent rounded-lg text-gray-800 focus:bg-white custom-focus-ring transition-all duration-300" required>
+                    <div id="password-error" class="text-red-500 text-sm mt-1 h-5"></div>
+                </div>
+                <div class="mb-4">
+                    <label asp-for="ConfirmPassword" class="block text-base font-medium text-gray-600 mb-1">Confirm Password</label>
+                    <input asp-for="ConfirmPassword" type="password" id="confirmPassword" name="ConfirmPassword" class="w-full px-4 py-3 bg-gray-100 border-2 border-transparent rounded-lg text-gray-800 focus:bg-white custom-focus-ring transition-all duration-300" required>
+                    <div id="confirmPassword-error" class="text-red-500 text-sm mt-1 h-5"></div>
+                </div>
+
+                <div class="text-center pt-4">
+                    <button type="submit" class="bg-transparent border-2 border-purple-600 text-purple-600 font-medium py-3 px-12 rounded-xl hover:shadow-lg hover:shadow-gray-300/50 focus:outline-none focus:ring-4 focus:ring-purple-300 transition-all duration-300 ease-in-out text-xl">
+                        Sign Up
+                    </button>
+                </div>
+            </form>
+            <p class="text-center mt-4 text-gray-600">
+                Already have an account?
+                <a href="@Url.Action("Login", "UserData")" class="text-purple-600 hover:underline">Sign In</a>
+            </p>
+        </div>
+
+        <div id="success-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+                <h3 class="text-2xl font-bold text-green-600 mb-4">Success!</h3>
+                <p id="success-message" class="text-gray-700 mb-6"></p>
+                <button id="close-modal" class="bg-purple-600 text-white py-2 px-6 rounded-md hover:bg-purple-700">Close</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Custom Dropdown Implementation ---
+            const createCustomDropdown = (selectElement) => {
+                const selectId = selectElement.id;
+                const selectWrapper = selectElement.parentElement;
+
+                const trigger = document.createElement('div');
+                trigger.setAttribute('tabindex', '0');
+                trigger.classList.add('w-full', 'px-4', 'py-3', 'bg-gray-100', 'border-2', 'border-transparent', 'rounded-lg', 'text-gray-800', 'focus:bg-white', 'custom-focus-ring', 'transition-all', 'duration-300', 'cursor-pointer', 'flex', 'justify-between', 'items-center');
+                trigger.innerHTML = `<span>${selectElement.options[selectElement.selectedIndex].text}</span><svg fill="gray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>`;
+
+                const optionsWrapper = document.createElement('div');
+                optionsWrapper.classList.add('absolute', 'w-full', 'mt-1', 'bg-white', 'rounded-lg', 'shadow-lg', 'overflow-hidden', 'z-10', 'hidden');
+
+                Array.from(selectElement.options).forEach(option => {
+                    if (option.disabled && option.selected) {
+                        trigger.querySelector('span').classList.add('text-gray-400');
+                    }
+                    if (option.disabled) return;
+
+                    const customOption = document.createElement('div');
+                    customOption.textContent = option.text;
+                    customOption.classList.add('px-4', 'py-3', 'cursor-pointer', 'hover:bg-gray-100');
+                    customOption.dataset.value = option.value;
+
+                    customOption.addEventListener('click', () => {
+                        selectElement.value = option.value;
+                        const triggerSpan = trigger.querySelector('span');
+                        triggerSpan.textContent = option.text;
+                        triggerSpan.classList.remove('text-gray-400');
+                        optionsWrapper.classList.add('hidden');
+                        selectElement.dispatchEvent(new Event('change'));
+                    });
+
+                    optionsWrapper.appendChild(customOption);
+                });
+
+                trigger.addEventListener('click', () => optionsWrapper.classList.toggle('hidden'));
+                trigger.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') optionsWrapper.classList.toggle('hidden');
+                });
+
+                selectWrapper.appendChild(trigger);
+                selectWrapper.appendChild(optionsWrapper);
+            };
+
+            document.querySelectorAll('select').forEach(createCustomDropdown);
+
+            // Close dropdowns when clicking outside
+            window.addEventListener('click', function(e) {
+                document.querySelectorAll('.relative').forEach(container => {
+                    if (!container.contains(e.target)) {
+                        const optionsWrapper = container.querySelector('.absolute');
+                        if (optionsWrapper) {
+                           optionsWrapper.classList.add('hidden');
+                        }
+                    }
+                });
+            });
+
+            // --- Form Validation ---
+            const successModal = document.getElementById('success-modal');
+            const closeModalButton = document.getElementById('close-modal');
+            const signupForm = document.getElementById('signupForm');
+            const fullNameInput = document.getElementById('fullName');
+            const usernameInput = document.getElementById('username');
+            const genderInput = document.getElementById('gender');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+
+            closeModalButton.addEventListener('click', () => successModal.classList.add('hidden'));
+
+            const showError = (input, message) => {
+                const errorElement = document.getElementById(input.id + '-error');
+                const trigger = input.closest('.relative')?.querySelector('[tabindex="0"]');
+                (trigger || input).classList.toggle('field-error', !!message);
+                if(errorElement) errorElement.textContent = message;
+            };
+
+            const clearError = (input) => {
+                const errorElement = document.getElementById(input.id + '-error');
+                const trigger = input.closest('.relative')?.querySelector('[tabindex="0"]');
+                (trigger || input).classList.remove('field-error');
+                 if(errorElement) errorElement.textContent = '';
+            };
+
+            usernameInput.addEventListener('input', () => {
+                const v = usernameInput.value;
+                let m = '';
+                if (v.length < 6) m = 'Username must be at least 6 characters long.';
+                else if (!/[a-z]/.test(v)) m = 'Must contain at least one lowercase letter.';
+                else if (!/\d/.test(v)) m = 'Must contain at least one number.';
+                else if (/[^a-zA-Z0-9.]/.test(v)) m = "Only letters, numbers, and '.' allowed.";
+                showError(usernameInput, m);
+            });
+
+            fullNameInput.addEventListener('input', () => showError(fullNameInput, fullNameInput.value.trim() ? '' : 'Full Name is required.'));
+            genderInput.addEventListener('change', () => showError(genderInput, genderInput.value ? '' : 'Gender is required.'));
+
+            passwordInput.addEventListener('input', () => {
+                const v = passwordInput.value;
+                let m = '';
+                if (v.length < 6) m = 'Password must be at least 6 characters long.';
+                else if (!/[a-z]/.test(v)) m = 'Must contain at least one lowercase letter.';
+                else if (!/[A-Z]/.test(v)) m = 'Must contain at least one uppercase letter.';
+                else if (!/\d/.test(v)) m = 'Must contain at least one number.';
+                else if (!/[\W_]/.test(v)) m = 'Must contain at least one special character.';
+                showError(passwordInput, m);
+            });
+
+            confirmPasswordInput.addEventListener('input', () => showError(confirmPasswordInput,
+                passwordInput.value === confirmPasswordInput.value ? '' : 'Passwords do not match.'));
+
+            emailInput.addEventListener('input', () => {
+                const v = emailInput.value.trim();
+                const regex = /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/;
+                showError(emailInput, v && !regex.test(v) ? 'Please enter a valid email address.' : '');
+            });
+
+            signupForm.addEventListener('submit', e => {
+                let isValid = validateSignUpForm();
+                if (!isValid) {
+                    e.preventDefault();
+                }
+            });
+
+            function validateSignUpForm() {
+                let valid = true;
+
+                // Clear all previous errors
+                [fullNameInput, usernameInput, genderInput, emailInput, passwordInput, confirmPasswordInput].forEach(clearError);
+
+                // Trigger real-time validations to show messages
+                fullNameInput.dispatchEvent(new Event('input'));
+                usernameInput.dispatchEvent(new Event('input'));
+                genderInput.dispatchEvent(new Event('change'));
+                emailInput.dispatchEvent(new Event('input'));
+                passwordInput.dispatchEvent(new Event('input'));
+                confirmPasswordInput.dispatchEvent(new Event('input'));
+
+                // Check for any error messages generated by the validators
+                document.querySelectorAll('.text-red-500').forEach(el => {
+                    if (el.textContent !== '') {
+                        valid = false;
+                    }
+                });
+
+                return valid;
+            }
+        });
+    </script>
+</body>
+</html>
