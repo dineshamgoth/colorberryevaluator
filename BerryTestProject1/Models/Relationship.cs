@@ -14,7 +14,7 @@ namespace BerryTestProject1.Models
 
         [Required, MaxLength(100)]
         public string PersonName { get; set; } = string.Empty;
-        public Gender PersonGender { get; set; }
+        public Gender Gender { get; set; }
 
         [Required]
         public int YearsKnown { get; set; }
