@@ -9,7 +9,7 @@ namespace BerryTestProject1.Models
         [Key]
         public int PersonDetailsId { get; set; }
 
-        [ForeignKey("User")]
+        [ForeignKey("UserData")]
         public int UserId { get; set; }
 
         [Required, MaxLength(100)]

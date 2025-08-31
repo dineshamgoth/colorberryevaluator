@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Evaluate</title>
+    <title>Person Form</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Poppins -->
@@ -43,7 +43,7 @@
             <div id="mainContent">
                 <!-- Evaluation Form -->
                 <form id="evaluationForm"
-                      action="@Url.Action("Evaluate", "Home")"
+                      action="@Url.Action("PersonForm", "Home")"
                       method="POST"
                       class="space-y-2"
                       novalidate>
@@ -251,30 +251,33 @@
                 const eventType = el.tagName === 'SELECT' ? 'change' : 'input';
                 el.addEventListener(eventType, () => clearError(el, errEl));
             });
-            // --- Timer Logic ---
-            let timerInterval;
-            const startTimer = (duration) => {
-                const radius = progressRing.r.baseVal.value;
-                const circumference = 2 * Math.PI * radius;
-                progressRing.style.strokeDasharray = circumference;
-                progressRing.style.strokeDashoffset = 0; // Start with full circle
-                let timeLeft = duration;
-                timerInterval = setInterval(() => {
-                    const minutes = Math.floor(timeLeft / 60);
-                    const seconds = timeLeft % 60;
-                    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(
-                        2,
-                        '0'
-                    )}`;
-                    const offset = circumference - (timeLeft / duration) * circumference;
-                    progressRing.style.strokeDashoffset = offset;
-                    if (--timeLeft < 0) {
-                        clearInterval(timerInterval);
-                        // Submit the form programmatically when timer ends
-                        form.submit();
-                    }
-                }, 1000);
+                    // --- Timer Logic ---
+        let timerInterval;
+        const startTimer = (duration) => {
+            const radius = progressRing.r.baseVal.value;
+            const circumference = 2 * Math.PI * radius;
+            progressRing.style.strokeDasharray = circumference;
+
+            let timeLeft = duration;
+            const updateTimer = () => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                const offset = circumference - ((duration - timeLeft) / duration) * circumference;
+                progressRing.style.strokeDashoffset = offset;
             };
+
+            updateTimer();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                if (timeLeft < 0) {
+                    clearInterval(timerInterval);
+                    form.submit();
+                }
+            }, 1000);
+        };
             // --- Form Submission Handler ---
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
@@ -288,7 +291,6 @@
                     }
                 });
                 if (!isValid) return;
-                // Hide form and show timer
                 form.classList.add('hidden');
                 formHeader.classList.add('hidden');
                 timerWrapper.classList.remove('hidden');

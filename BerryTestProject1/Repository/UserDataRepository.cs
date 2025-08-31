@@ -6,16 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BerryTestProject1.Repository
 {
-    public class UserDataRepository : IUserDataRepository
+    public class UserDataRepository(AppDbContext context) : IUserDataRepository
     {
-        private readonly AppDbContext _context;
-        private readonly IUserSessionService _userSessionService;
-
-        public UserDataRepository(AppDbContext context, IUserSessionService userSessionService)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _userSessionService = userSessionService;
-        }
+        private readonly AppDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
         public async Task<UserRegistrationVM?> GetUserDataByIdAsync(int id)
         {
@@ -50,6 +43,7 @@ namespace BerryTestProject1.Repository
                 {
                     return new UserDetailsVM
                     {
+                        Id = dbData.UserId,
                         Username = dbData.Username,
                         FullName = dbData.FullName,
                         Password = dbData.PasswordHash,
@@ -81,17 +75,23 @@ namespace BerryTestProject1.Repository
 
         public async Task AddAsync(UserRegistrationVM user)
         {
-            if (user == null)
-                throw new ArgumentNullException(nameof(user));
-            UserData data = UserDataMapper.ToEntity(user);
-            await _context.UserData.AddAsync(data);
-            await SaveChangesAsync();
+            try
+            {
+                ArgumentNullException.ThrowIfNull(user);
+                UserData data = UserDataMapper.ToEntity(user);
+                await _context.UserData.AddAsync(data);
+                await SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[AddAsync] Error: {ex.Message}");
+                throw;
+            }
         }
 
         public async Task Update(UserRegistrationVM user)
         {
-            if (user == null)
-                throw new ArgumentNullException(nameof(user));
+            ArgumentNullException.ThrowIfNull(user);
             UserData data = UserDataMapper.ToEntity(user);
             _context.UserData.Update(data);
             await SaveChangesAsync();

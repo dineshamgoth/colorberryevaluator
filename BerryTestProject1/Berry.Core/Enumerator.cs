@@ -5,7 +5,7 @@
         StronglyAgree = 2,
         Agree = 1,
         Neutral = 0,
-        WeaklyDisagree = -1,
+        Disagree = -1,
         StronglyDisagree = -2
     }
     public enum Gender

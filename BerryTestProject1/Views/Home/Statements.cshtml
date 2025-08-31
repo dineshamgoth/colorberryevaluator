@@ -1,0 +1,251 @@
+﻿@using BerryTestProject1.Models;
+@model List<Statement>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Statements Evaluation</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .rating-label {
+            transition: all 0.2s ease-in-out;
+        }
+
+        input[type="radio"]:checked + .rating-label {
+            background-color: #7c3aed;
+            border-color: #7c3aed;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Animation for statement transition */
+        .statement-card {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @@keyframes fadeIn {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        #progressBar {
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <div class="min-h-screen flex items-center justify-center p-4"
+         style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)">
+        <div class="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12">
+            <!-- Header -->
+            <header id="formHeader" class="text-center mb-8">
+                <p class="text-2xl md:text-3xl font-semibold text-gray-700">Statements for Evaluation</p>
+                <p class="text-gray-500 mt-2">Please rate your level of agreement for each statement below.</p>
+
+                <!-- Progress Bar -->
+                <div class="mt-6 text-left">
+                    <div class="flex justify-between mb-1">
+                        <span class="text-base font-medium text-purple-700">Progress</span>
+                        <span id="progressText" class="text-sm font-medium text-purple-700">Statement 1 of @Model.Count</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="progressBar" class="bg-purple-600 h-2.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <div id="mainContent">
+                <!-- Statements Form -->
+                <form id="statementsForm" action="@Url.Action("EvaluationResult", "Home")" method="POST">
+                    <div class="space-y-6">
+                        @if (Model != null && Model.Any())
+                        {
+                            @for (int i = 0; i < Model.Count; i++)
+                            {
+                                <!-- Statement Card (initially hidden except for the first one) -->
+                                <div id="statement-card-@i" class="statement-card p-6 border border-gray-200 rounded-xl shadow-sm bg-gray-50/50 @(i == 0 ? "" : "hidden")">
+                                    <p class="text-xl text-gray-800 mb-5 text-center">
+                                        @Model[i].AssertiveStatement
+                                    </p>
+
+                                    <!-- Hidden inputs for data binding -->
+                                    <input type="hidden" name="Responses[@i].StatementId" value="@Model[i].StatementId" />
+                                    <input type="hidden" name="Responses[@i].RelationshipId" value="@ViewData["RelationshipId"]" />
+
+                                    <!-- Rating Buttons -->
+                                    <div class="flex flex-wrap justify-center items-center gap-3">
+                                        @{
+                                            var ratings = new Dictionary<string, int>
+                                                                {
+                                                                { "Strongly Agree", 2 },
+                                                                { "Agree", 1 },
+                                                                { "Neutral", 0 },
+                                                                { "Disagree", -1 },
+                                                                { "Strongly Disagree", -2 }
+                                                                };
+                                        }
+                                        @foreach (var rating in ratings)
+                                        {
+                                            var ratingId = $"rating-{i}-{rating.Key.Replace(" ", "")}";
+                                            <div>
+                                                <input type="radio" id="@ratingId" name="Responses[@i].Intensity" value="@rating.Value" class="hidden" />
+                                                <label for="@ratingId"
+                                                       class="rating-label block cursor-pointer select-none rounded-xl p-3 text-center border-2 border-gray-300 bg-white text-gray-600 hover:border-purple-500 hover:text-purple-600 font-medium">
+                                                    @rating.Key
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-center text-gray-500">No statements to display.</p>
+                        }
+                    </div>
+
+                    <!-- Navigation and Submission -->
+                    <div class="mt-8">
+                        <div id="validation-error" class="text-red-500 text-center h-6 mb-2"></div>
+                        <div class="flex justify-between items-center">
+                            <!-- Previous Button -->
+                            <button type="button" id="prevBtn"
+                                    class="bg-gray-200 text-gray-700 font-medium py-3 px-8 rounded-xl
+                                           hover:bg-gray-300
+                                           focus:outline-none focus:ring-4 focus:ring-gray-300
+                                           transition-all duration-300 ease-in-out text-lg">
+                                Previous
+                            </button>
+
+                            <!-- Next Button -->
+                            <button type="button" id="nextBtn"
+                                    class="bg-purple-600 text-white font-medium py-3 px-12 rounded-xl
+                                           hover:bg-purple-700
+                                           focus:outline-none focus:ring-4 focus:ring-purple-300
+                                           transition-all duration-300 ease-in-out text-lg">
+                                Next
+                            </button>
+
+                            <!-- Submit Button (initially hidden) -->
+                            <button type="submit" id="submitBtn"
+                                    class="hidden bg-green-600 text-white font-medium py-3 px-12 rounded-xl
+                                           hover:bg-green-700 hover:shadow-lg hover:shadow-green-200
+                                           focus:outline-none focus:ring-4 focus:ring-green-300
+                                           transition-all duration-300 ease-in-out text-xl">
+                                Submit Evaluation
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const statementCards = document.querySelectorAll('.statement-card');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const validationError = document.getElementById('validation-error');
+            const form = document.getElementById('statementsForm');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+
+            let currentIndex = 0;
+            const totalStatements = statementCards.length;
+
+            const updateView = () => {
+                // Show/hide statement cards
+                statementCards.forEach((card, index) => {
+                    card.classList.toggle('hidden', index !== currentIndex);
+                });
+
+                // Show/hide navigation buttons
+                prevBtn.classList.toggle('invisible', currentIndex === 0);
+                nextBtn.classList.toggle('hidden', currentIndex === totalStatements - 1);
+                submitBtn.classList.toggle('hidden', currentIndex !== totalStatements - 1);
+
+                // Update progress bar
+                if (totalStatements > 0) {
+                    const progressPercentage = ((currentIndex + 1) / totalStatements) * 100;
+                    progressBar.style.width = `${progressPercentage}%`;
+                    progressText.textContent = `Statement ${currentIndex + 1} of ${totalStatements}`;
+                }
+
+                // Clear any previous validation error
+                validationError.textContent = '';
+            };
+
+            const validateCurrentStep = () => {
+                const currentRadios = document.querySelector(`input[name="Responses[${currentIndex}].Intensity"]:checked`);
+                if (!currentRadios) {
+                    validationError.textContent = 'Please select a rating before proceeding.';
+                    return false;
+                }
+                validationError.textContent = '';
+                return true;
+            };
+
+            nextBtn.addEventListener('click', () => {
+                if (validateCurrentStep()) {
+                    if (currentIndex < totalStatements - 1) {
+                        currentIndex++;
+                        updateView();
+                    }
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateView();
+                }
+            });
+
+            form.addEventListener('submit', (e) => {
+                if (!validateCurrentStep()) {
+                    e.preventDefault(); // Stop form submission if last question is unanswered
+                }
+            });
+
+            // Initial view setup
+            if (totalStatements > 0) {
+                updateView();
+            } else {
+                // Hide all nav if no statements
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+                submitBtn.classList.add('hidden');
+                // Hide progress bar if no statements
+                document.querySelector('.mt-6.text-left').classList.add('hidden');
+            }
+        });
+    </script>
+
+</body>
+</html>

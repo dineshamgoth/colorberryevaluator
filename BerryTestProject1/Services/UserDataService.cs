@@ -24,7 +24,6 @@ namespace BerryTestProject1.Services
             {
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
                 _userDataRepository.AddAsync(user);
-                _userDataRepository.SaveChangesAsync();
             }
             catch(Exception ex)
             {

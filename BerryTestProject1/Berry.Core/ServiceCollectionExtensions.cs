@@ -10,7 +10,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserDataService, UserDataService>();
         services.AddScoped<IUserDataRepository, UserDataRepository>();
         services.AddScoped<IUserSessionService, UserSessionService>();
-        services.AddScoped<IRelationshipService, RelationshipService>();
+        services.AddScoped<IPersonDetailsService, PersonDetailsService>();
+        services.AddScoped<IPersonDetailsRepository, PersonDetailsRepository>();
         services.AddHttpContextAccessor();
         return services;
     }

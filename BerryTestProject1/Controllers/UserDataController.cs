@@ -2,17 +2,11 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-
-public class UserDataController : Controller
+namespace BerryTestProject1.Controllers;
+public class UserDataController(IUserDataService userDataService) : Controller
 {
-    private readonly IUserDataService _userDataService;
-    private readonly IUserSessionService _userSessionService;
+    private readonly IUserDataService _userDataService = userDataService;
 
-    public UserDataController(IUserDataService userDataService, IUserSessionService userSessionService)
-    {
-        _userDataService = userDataService;
-        _userSessionService = userSessionService;
-    }
     [HttpGet]
     public IActionResult Register()
     {
@@ -51,13 +45,13 @@ public class UserDataController : Controller
             return View();
         }
         var claims = new List<Claim>
-    {
-        new(ClaimTypes.NameIdentifier, user.Id.ToString()), 
-        new(ClaimTypes.Name, user.FullName ?? string.Empty),
-        new(ClaimTypes.Email, user.Email ?? string.Empty),
-        new("Username", user.Username ?? string.Empty),
-        new(ClaimTypes.Role, "User")
-    };
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()), 
+            new(ClaimTypes.Name, user.FullName ?? string.Empty),
+            new(ClaimTypes.Email, user.Email ?? string.Empty),
+            new("Username", user.Username ?? string.Empty),
+            new(ClaimTypes.Role, "User")
+        };
 
         var claimsIdentity = new ClaimsIdentity(claims, "UserCookie");
         var authProperties = new AuthenticationProperties
@@ -76,8 +70,6 @@ public class UserDataController : Controller
 
         return RedirectToAction("Index", "Home");
     }
-
-
     [HttpGet]
     public IActionResult Login()
     {

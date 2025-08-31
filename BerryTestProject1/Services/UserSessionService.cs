@@ -3,14 +3,10 @@ using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 namespace BerryTestProject1.Services
 {
-    public class UserSessionService : IUserSessionService
+    public class UserSessionService(IHttpContextAccessor httpContextAccessor) : IUserSessionService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
-        public UserSessionService(IHttpContextAccessor httpContextAccessor)
-        {
-            _httpContextAccessor = httpContextAccessor;
-        }
         public string? GetUserId()
         {
             return _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
