@@ -9,19 +9,18 @@ namespace BerryTestProject1.Models
         [Key]
         public int ResponseId { get; set; }
 
-        [ForeignKey("Relationship")]
-        public int RelationshipId { get; set; }
+        [ForeignKey("PersonDetails")]
+        public int PersonDetailsId { get; set; }
 
         [ForeignKey("Statement")]
         public int StatementId { get; set; }
 
         [Required]
         public ResponseIntensity Intensity { get; set; }
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Navigation
-        public Relationship Relationship { get; set; } = null!;
+        public PersonDetails PersonDetails { get; set; } = null!;
         public Statement Statement { get; set; } = null!;
     }
 }

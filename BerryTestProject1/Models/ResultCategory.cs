@@ -15,6 +15,8 @@ namespace BerryTestProject1.Models
 
         [Required, MaxLength(500)]
         public string Message { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         // Navigation
         public ICollection<Score> Scores { get; set; } = new List<Score>();

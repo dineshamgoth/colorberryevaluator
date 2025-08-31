@@ -23,9 +23,10 @@ namespace BerryTestProject1.Models
         [Required]
         public string PasswordHash { get; set; } = string.Empty;
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties
-        public ICollection<Relationship> Relationships { get; set; } = new List<Relationship>();
+        public ICollection<PersonDetails> PersonDetails { get; set; } = new List<PersonDetails>();
     }
 }

@@ -8,8 +8,8 @@ namespace BerryTestProject1.Models
         [Key]
         public int ScoreId { get; set; }
 
-        [ForeignKey("Relationship")]
-        public int RelationshipId { get; set; }
+        [ForeignKey("PersonDetails")]
+        public int PersonDetailsId { get; set; }
 
         [Required]
         public double FinalScore { get; set; }
@@ -17,10 +17,11 @@ namespace BerryTestProject1.Models
         [ForeignKey("ResultCategory")]
         public int ResultCategoryId { get; set; }
 
-        public DateTime EvaluatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime EvaluatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         // Navigation
-        public Relationship Relationship { get; set; } = null!;
+        public PersonDetails PersonDetails { get; set; } = null!;
         public ResultCategory ResultCategory { get; set; } = null!;
     }
 }
