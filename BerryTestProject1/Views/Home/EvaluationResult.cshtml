@@ -1,0 +1,63 @@
+﻿@using BerryTestProject1.ViewModels;
+@model FinalResultVM;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Evaluation Result</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <div class="min-h-screen flex items-center justify-center p-4"
+         style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)">
+        <div class="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center">
+            <!-- Header -->
+            <header class="mb-8">
+                <p class="text-3xl md:text-4xl font-bold text-gray-800">Evaluation Complete</p>
+            </header>
+
+            <!-- Main Content: Image and Message -->
+            <div id="resultContent">
+                <!-- Image Display -->
+                <div class="mb-8">
+                    <img src="@Model.ImageURI"
+                         alt="Evaluation Result Image"
+                         class="w-48 h-48 mx-auto object-cover rounded-full shadow-2xl border-8 border-purple-100"
+                         onerror="this.onerror=null; this.src='https://placehold.co/192x192/E9D5FF/7C3AED?text=Result';" />
+                </div>
+
+                <!-- Message Display -->
+                <div class="mb-8 px-4">
+                    <p class="text-xl font-medium text-gray-700 leading-relaxed">
+                        @Model.Message
+                    </p>
+                </div>
+
+                <!-- Action Button -->
+                <div class="mt-10">
+                    <a href="@Url.Action("Index", "Home")"
+                       class="bg-purple-600 text-white font-medium py-3 px-12 rounded-xl
+                              hover:bg-purple-700 hover:shadow-lg hover:shadow-purple-200
+                              focus:outline-none focus:ring-4 focus:ring-purple-300
+                              transition-all duration-300 ease-in-out text-xl">
+                        Done
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

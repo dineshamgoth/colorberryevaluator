@@ -1,3 +1,4 @@
+using BerryTestProject1.Berry.Core;
 using BerryTestProject1.Interfaces;
 using BerryTestProject1.Models;
 using BerryTestProject1.ViewModels;
@@ -72,11 +73,15 @@ namespace BerryTestProject1.Controllers
         }
         [Authorize]
         [HttpPost]
-        public IActionResult EvaluationResult([FromForm] List<UserResponseVM> Responses)
+        public async Task<IActionResult> EvaluationResult([FromForm] List<UserResponseVM> Responses, ReciprocityLevel level)
         {
             try
             {
-                _relationshipService.SaveResponses(Responses);
+                FinalResultVM? result = await _relationshipService.SaveResponses(Responses, level);
+                if (result != null)
+                {
+                    return View(result);
+                }
             }
             catch (Exception ex)
             {

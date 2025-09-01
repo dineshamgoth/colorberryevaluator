@@ -41,8 +41,8 @@ public class UserDataController(IUserDataService userDataService) : Controller
         var user = await _userDataService.GetUserByUsername(username);
         if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
         {
-            ModelState.AddModelError("", "Invalid username or password.");
-            return View();
+            ViewData["ErrorMessage"] = "Invalid username or password.";
+            return View(user);
         }
         var claims = new List<Claim>
         {

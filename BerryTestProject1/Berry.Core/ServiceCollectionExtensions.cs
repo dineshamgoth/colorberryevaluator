@@ -1,7 +1,8 @@
 ﻿namespace BerryTestProject1.core;
-using BerryTestProject1.Services;
+using BerryTestProject1.Berry.Core;
 using BerryTestProject1.Interfaces;
 using BerryTestProject1.Repository;
+using BerryTestProject1.Services;
 
 public static class ServiceCollectionExtensions
 {

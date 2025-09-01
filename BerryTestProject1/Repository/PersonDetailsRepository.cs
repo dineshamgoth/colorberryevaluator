@@ -94,14 +94,83 @@ namespace BerryTestProject1.Repository
             }
         }
 
-        public async Task SaveUserResponsesAsync(List<Response> responses)
+        public async Task<bool> SaveUserResponsesAsync(List<Response> responses)
         {
+            bool flag = false;
             try
             {
                 if (responses != null && responses.Count > 0)
                 {
                     await _context.Response.AddRangeAsync(responses);
                     await _context.SaveChangesAsync();
+                    flag = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.ToString());
+            }
+            return flag;
+        }
+
+        public InteractionFrequency GetInteractionFrequency(int personId)
+        {
+            try
+            {
+                var person = _context.PersonDetails.Where(p => p.PersonDetailsId == personId)
+                .OrderByDescending(p => p.CreatedAt).FirstOrDefault();
+                return person?.InteractionFrequency ?? InteractionFrequency.rarely;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[GetInteractionFrequency] Error: {ex.Message}");
+                return InteractionFrequency.rarely;
+            }
+        }
+
+        public Dictionary<string, int> LoadStatementScores()
+        {
+            try
+            {
+                return _context.Statement.ToDictionary(c => c.Category, c => c.Score);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[LoadStatementScores] Error: {ex.Message}");
+                return new Dictionary<string, int>();
+            }
+        }
+
+        public string GetCategoryByStatement(int statementId)
+        {
+            try
+            {
+                return _context.Statement
+                    .Where(s => s.StatementId == statementId)
+                    .Select(s => s.Category)
+                    .FirstOrDefault() ?? string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[GetCategoryByStatement] Error: {ex.Message}");
+                return string.Empty;
+            }
+        }
+
+        public void saveFinalResult(FinalResultVM result, int PersonId)
+        {
+            try
+            {
+                if(result != null)
+                {
+                    Score data = new()
+                    {
+                        PersonDetailsId = PersonId,
+                        FinalScore = result.FinalScore,
+                        ResultCategoryId = Convert.ToInt32(result.ResultCategory),
+                    };
+                    _context.Score.Add(data);
+                    _context.SaveChanges();
                 }
             }
             catch (Exception ex)
@@ -109,5 +178,64 @@ namespace BerryTestProject1.Repository
                 Console.Write(ex.ToString());
             }
         }
+        public string getResultMessagebyId(int ResultId)
+        {
+            string message = String.Empty;
+            try
+            {
+                 message = _context.ResultCategory
+                .Where(r => r.ResultCategoryId == ResultId)
+                .Select(r => r.Message)
+                .FirstOrDefault() ?? string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.ToString());
+            }
+            return message;
+        }
+
+        public Dictionary<string, string> GetNamesByPersonId(int personId)
+        {
+            try
+            {
+                var result = (from p in _context.PersonDetails
+                              join u in _context.UserData on p.UserId equals u.UserId
+                              where p.PersonDetailsId == personId
+                              select new
+                              {
+                                  p.PersonName,
+                                  u.FullName
+                              }).FirstOrDefault();
+
+                return result == null
+                    ? new Dictionary<string, string>()
+                    : new Dictionary<string, string>
+                    {
+                        { "UserName", result.FullName },
+                        { "PersonName", result.PersonName }
+                    };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);  // better to log properly in production
+                return new Dictionary<string, string>(); // safe fallback
+            }
+        }
+
+        public int GetYearsKnownbyPersonId(int personId)
+        {
+            try
+            {
+                return _context.PersonDetails.Where(p => p.PersonDetailsId == personId)
+                    .Select(p => p.YearsKnown).FirstOrDefault();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return -1;
+            }
+        }
+
     }
 }

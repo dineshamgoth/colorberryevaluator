@@ -18,6 +18,7 @@ namespace BerryTestProject1.Models
         [Required]
         public ResponseIntensity Intensity { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         // Navigation
         public PersonDetails PersonDetails { get; set; } = null!;

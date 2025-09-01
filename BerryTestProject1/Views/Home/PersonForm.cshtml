@@ -25,10 +25,6 @@
         .field-error {
             border-color: #ef4444 !important; /* red-500 */
         }
-        /* Smooth transition for the progress ring */
-        #progress-ring {
-            transition: stroke-dashoffset 1s linear;
-        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -39,7 +35,7 @@
             <header id="formHeader" class="text-center">
                 <p class="text-2xl md:text-3xl font-semibold text-gray-700">Who are we evaluating?</p>
             </header>
-            <!-- Main Content Area: Wraps form and timer for smoother transition -->
+            <!-- Main Content Area -->
             <div id="mainContent">
                 <!-- Evaluation Form -->
                 <form id="evaluationForm"
@@ -101,43 +97,6 @@
                         </button>
                     </div>
                 </form>
-                <!-- Timer Container -->
-                <div id="timerWrapper" class="hidden text-center">
-                    <p class="text-xl text-gray-600 mb-6">Before we evaluate, relax and calm your mind. Take a deep breath.</p>
-                    <div class="relative w-56 h-56 mx-auto">
-                        <svg class="w-full h-full" viewBox="0 0 100 100">
-                            <!-- Define the gradient for the progress ring -->
-                            <defs>
-                                <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" style="stop-color:#34D399;" />
-                                    <stop offset="100%" style="stop-color:#10B981;" />
-                                </linearGradient>
-                            </defs>
-                            <!-- Background circle -->
-                            <circle class="text-gray-200"
-                                    stroke-width="10"
-                                    cx="50"
-                                    cy="50"
-                                    r="45"
-                                    fill="transparent" />
-                            <!-- Progress circle -->
-                            <circle id="progress-ring"
-                                    stroke="url(#timerGradient)"
-                                    stroke-width="10"
-                                    cx="50"
-                                    cy="50"
-                                    r="45"
-                                    fill="transparent"
-                                    stroke-linecap="round"
-                                    transform="rotate(-90 50 50)" />
-                        </svg>
-                        <div id="timerDisplay"
-                             class="absolute inset-0 flex items-center justify-center text-3xl font-bold text-green-600">
-                            03:00
-                        </div>
-                    </div>
-                    <p id="timerMessage" class="text-lg text-gray-600 h-6 mt-6"></p>
-                </div>
             </div>
         </div>
     </div>
@@ -145,12 +104,6 @@
         document.addEventListener('DOMContentLoaded', function () {
             // --- Element References ---
             const form = document.getElementById('evaluationForm');
-            const formHeader = document.getElementById('formHeader');
-            const mainContent = document.getElementById('mainContent');
-            const timerWrapper = document.getElementById('timerWrapper');
-            const timerDisplay = document.getElementById('timerDisplay');
-            const timerMessage = document.getElementById('timerMessage');
-            const progressRing = document.getElementById('progress-ring');
             const personName = document.getElementById('personName');
             const yearsKnown = document.getElementById('yearsKnown');
             const interaction = document.getElementById('interaction');
@@ -159,42 +112,25 @@
             const yearsError = document.getElementById('yearsError');
             const interactionError = document.getElementById('interactionError');
             const genderError = document.getElementById('genderError');
+
             // --- Custom Dropdown Implementation ---
             const createCustomDropdown = (selectElement) => {
                 const selectWrapper = selectElement.parentElement;
                 const trigger = document.createElement('div');
                 trigger.setAttribute('tabindex', '0');
                 trigger.classList.add(
-                    'w-full',
-                    'px-4',
-                    'py-3',
-                    'bg-gray-100',
-                    'border-2',
-                    'border-transparent',
-                    'rounded-lg',
-                    'text-gray-800',
-                    'focus:bg-white',
-                    'custom-focus-ring',
-                    'transition-all',
-                    'duration-300',
-                    'cursor-pointer',
-                    'flex',
-                    'justify-between',
-                    'items-center'
+                    'w-full', 'px-4', 'py-3', 'bg-gray-100', 'border-2', 'border-transparent',
+                    'rounded-lg', 'text-gray-800', 'focus:bg-white', 'custom-focus-ring',
+                    'transition-all', 'duration-300', 'cursor-pointer', 'flex', 'justify-between', 'items-center'
                 );
                 trigger.innerHTML = `<span>${selectElement.options[selectElement.selectedIndex].text}</span><svg fill="gray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>`;
+
                 const optionsWrapper = document.createElement('div');
                 optionsWrapper.classList.add(
-                    'absolute',
-                    'w-full',
-                    'mt-1',
-                    'bg-white',
-                    'rounded-lg',
-                    'shadow-lg',
-                    'overflow-hidden',
-                    'z-10',
-                    'hidden'
+                    'absolute', 'w-full', 'mt-1', 'bg-white', 'rounded-lg', 'shadow-lg',
+                    'overflow-hidden', 'z-10', 'hidden'
                 );
+
                 Array.from(selectElement.options).forEach((option) => {
                     if (option.disabled) return;
                     const customOption = document.createElement('div');
@@ -211,17 +147,22 @@
                     });
                     optionsWrapper.appendChild(customOption);
                 });
+
                 trigger.addEventListener('click', () => optionsWrapper.classList.toggle('hidden'));
                 trigger.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' || e.key === ' ') optionsWrapper.classList.toggle('hidden');
                 });
+
                 selectWrapper.appendChild(trigger);
                 selectWrapper.appendChild(optionsWrapper);
+
                 if (selectElement.value === '') {
                     trigger.querySelector('span').classList.add('text-gray-400');
                 }
             };
+
             document.querySelectorAll('select').forEach(createCustomDropdown);
+
             window.addEventListener('click', function (e) {
                 document.querySelectorAll('.relative').forEach((container) => {
                     if (!container.contains(e.target)) {
@@ -230,57 +171,34 @@
                     }
                 });
             });
+
             // --- Form Validation ---
             const showError = (input, errorElement, message) => {
                 const el = input.closest('.relative')?.querySelector('[tabindex="0"]') || input;
                 el.classList.add('field-error');
                 errorElement.textContent = message;
             };
+
             const clearError = (input, errorElement) => {
                 const el = input.closest('.relative')?.querySelector('[tabindex="0"]') || input;
                 el.classList.remove('field-error');
                 errorElement.textContent = '';
             };
+
             const fieldsToValidate = [
                 { el: personName, errEl: nameError, msg: "Person's name is required" },
                 { el: yearsKnown, errEl: yearsError, msg: "Years known is required" },
                 { el: interaction, errEl: interactionError, msg: 'Please select an interaction frequency' },
                 { el: gender, errEl: genderError, msg: 'Please select a gender' }
             ];
+
             fieldsToValidate.forEach(({ el, errEl, msg }) => {
                 const eventType = el.tagName === 'SELECT' ? 'change' : 'input';
                 el.addEventListener(eventType, () => clearError(el, errEl));
             });
-                    // --- Timer Logic ---
-        let timerInterval;
-        const startTimer = (duration) => {
-            const radius = progressRing.r.baseVal.value;
-            const circumference = 2 * Math.PI * radius;
-            progressRing.style.strokeDasharray = circumference;
 
-            let timeLeft = duration;
-            const updateTimer = () => {
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-                const offset = circumference - ((duration - timeLeft) / duration) * circumference;
-                progressRing.style.strokeDashoffset = offset;
-            };
-
-            updateTimer();
-
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimer();
-                if (timeLeft < 0) {
-                    clearInterval(timerInterval);
-                    form.submit();
-                }
-            }, 1000);
-        };
             // --- Form Submission Handler ---
             form.addEventListener('submit', function (event) {
-                event.preventDefault();
                 let isValid = true;
                 fieldsToValidate.forEach(({ el, errEl, msg }) => {
                     if (el.value.trim() === '') {
@@ -290,11 +208,11 @@
                         clearError(el, errEl);
                     }
                 });
-                if (!isValid) return;
-                form.classList.add('hidden');
-                formHeader.classList.add('hidden');
-                timerWrapper.classList.remove('hidden');
-                startTimer(9); // 3 minutes
+
+                if (!isValid) {
+                    event.preventDefault(); // Prevent submission only if validation fails
+                }
+                // If validation passes, the form will submit to the server normally.
             });
         });
     </script>

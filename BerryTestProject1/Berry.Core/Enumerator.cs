@@ -20,4 +20,24 @@
         monthly = 3,
         rarely = 4
     }
+
+    public enum ReciprocityLevel
+    {
+        HighlyReciprocal = 5,
+        MostlyReciprocal = 4,
+        Neutral = 3,
+        MostlyNonReciprocal = 2,
+        HighlyNonReciprocal = 1
+    }
+
+    public enum FinalResultCategory
+    {
+        Core = 1,
+        InnerCircle = 2,
+        Allies = 3,
+        OuterCircle = 4,
+        QuarantineZone = 5,
+        ExclusionZone = 6,
+        Neutral = 7
+    }
 }

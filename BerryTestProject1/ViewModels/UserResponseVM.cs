@@ -6,5 +6,6 @@ namespace BerryTestProject1.ViewModels
         public int StatementId { get; set; }
         public ResponseIntensity Intensity { get; set; }
         public int RelationshipId { get; set; }
+        public string Category { get; set; } = string.Empty;
     }
 }

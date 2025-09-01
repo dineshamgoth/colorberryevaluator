@@ -44,6 +44,15 @@
             </header>
 
             <form id="signinForm" asp-controller="UserData" asp-action="Login" method="post" class="space-y-2" novalidate>
+
+                <!-- Server-side Error Message Display -->
+                @if (ViewData["ErrorMessage"] != null)
+                {
+                    <div class="mb-4 text-center p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                        @ViewData["ErrorMessage"]
+                    </div>
+                }
+
                 <div class="mb-4">
                     <label for="username" class="block text-base font-medium text-gray-600 mb-1">Username</label>
                     <input type="text" id="username" name="Username" class="w-full px-4 py-3 bg-gray-100 border-2 border-transparent rounded-lg text-gray-800 focus:bg-white custom-focus-ring transition-all duration-300" required>
