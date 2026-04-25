@@ -8,6 +8,9 @@ namespace BerryTestProject1.ViewModels
         public double FinalScore { get; set; }
         public FinalResultCategory ResultCategory { get; set; } = FinalResultCategory.OuterCircle;
         public string ImageURI { get; set; } = string.Empty;
-        public string? Message { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
+        public string PersonName {  get; set; } = string.Empty;
+        public Gender PersonGender {  get; set; }
     }
 }

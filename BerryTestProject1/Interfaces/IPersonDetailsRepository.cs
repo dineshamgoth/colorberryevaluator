@@ -17,7 +17,7 @@ namespace BerryTestProject1.Interfaces
         string GetCategoryByStatement(int statementId);
         void saveFinalResult(FinalResultVM result, int PersonId);
         string getResultMessagebyId(int ResultId);
-        Dictionary<string, string> GetNamesByPersonId(int personId);
+        (string UserName, string PersonName, Gender gender) GetDataByPersonId(int personId);
         int GetYearsKnownbyPersonId(int personId);
     }
 }

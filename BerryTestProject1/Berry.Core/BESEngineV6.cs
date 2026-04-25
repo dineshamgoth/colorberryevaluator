@@ -28,7 +28,6 @@ namespace BerryTestProject1.Berry.Core
 
                 var intensityModifier = GetIntensityModifier(response.Intensity);
 
-                // ✅ Directional intensity
                 var score = baseWeight + Math.Sign(baseWeight) * intensityModifier;
 
                 if (baseWeight > 0) positiveSum += score;
@@ -44,31 +43,23 @@ namespace BerryTestProject1.Berry.Core
             bool IsStrong(string key) =>
                 presentCategories.TryGetValue(key, out var val) && val == ResponseIntensity.StronglyAgree;
 
-            // Synergy Bonus
             if (IsStrong("WellWisher") && IsStrong("GrowthCatalyst"))
                 positiveSum += 2;
 
-            // Red-Flag Multiplier
             if (IsStrong("Backstabber") && IsStrong("Manipulator"))
                 negativeSum *= 1.2;
 
 
-            // Step 2: Initial Impact
             var initialImpact = positiveSum + (negativeSum * 1.3);
 
-            // Step 3: Reciprocity
             var adjusted = initialImpact * GetReciprocityMultiplier(reciprocity, initialImpact);
 
-            // Step 4: Frequency
             var unscaled = adjusted * GetFrequencyMultiplier(frequency);
 
-            // NEW Step: Years Known multiplier
-            var longevityAdjusted = unscaled * GetYearsKnownMultiplier(yearsKnown);
+            //var longevityAdjusted = unscaled * GetYearsKnownMultiplier(yearsKnown);
 
-            // Step 5: Soft-cap normalization
             var finalScore = 10 * Math.Tanh(unscaled / 10);
 
-            // Step 6: Circle classification
             FinalResultCategory circle = finalScore switch
             {
                 >= 8.5 => FinalResultCategory.Core,

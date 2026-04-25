@@ -195,7 +195,7 @@ namespace BerryTestProject1.Repository
             return message;
         }
 
-        public Dictionary<string, string> GetNamesByPersonId(int personId)
+        public (string UserName, string PersonName, Gender gender) GetDataByPersonId(int personId)
         {
             try
             {
@@ -205,21 +205,19 @@ namespace BerryTestProject1.Repository
                               select new
                               {
                                   p.PersonName,
-                                  u.FullName
+                                  u.FullName,
+                                  p.Gender
                               }).FirstOrDefault();
-
-                return result == null
-                    ? new Dictionary<string, string>()
-                    : new Dictionary<string, string>
-                    {
-                        { "UserName", result.FullName },
-                        { "PersonName", result.PersonName }
-                    };
+                if (result == null)
+                {
+                    return ("", "", 0); 
+                }
+                return (result.FullName, result.PersonName, result.Gender);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);  // better to log properly in production
-                return new Dictionary<string, string>(); // safe fallback
+                Console.WriteLine(ex);  
+                return ("", "", 0);
             }
         }
 

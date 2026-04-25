@@ -103,12 +103,15 @@ namespace BerryTestProject1.Services
                     {
                         int ResultId = Convert.ToInt32(result.ResultCategory);
                         string message = _personDetailsRepository.getResultMessagebyId(ResultId);
-                        Dictionary<string, string> names = _personDetailsRepository.GetNamesByPersonId(PersonId);
-                        if(names != null && names.Count > 0)
+                        var (UserName, PersonName, gender) = _personDetailsRepository.GetDataByPersonId(PersonId);
+                        string pronoun = gender == Gender.male  ? "him" : "her";
+                        if(!String.IsNullOrEmpty(PersonName) && 
+                            !String.IsNullOrEmpty(UserName))
                         {
                             result.Message = message
-                                .Replace("{user}", names["UserName"])
-                                .Replace("{name}", names["PersonName"]);
+                                .Replace("{user}", UserName)
+                                .Replace("{name}", PersonName)
+                                .Replace("{pronoun}", pronoun);
                         }
                         result.ImageURI = GetCategoryImage(result.ResultCategory);
                     }
