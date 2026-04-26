@@ -32,11 +32,6 @@ namespace BerryTestProject1.Services
             {
                 var statements = await _personDetailsRepository.GetAllStatementsAsync();
                 int n = statements.Count;
-                //Testing purpose
-                /*List<Statement> statements1 = new List<Statement>();
-                statements1.Add(statements[0]);
-                statements1.Add(statements[1]);
-                return statements1;*/
                 while (n >= 1)
                 {
                     n--;

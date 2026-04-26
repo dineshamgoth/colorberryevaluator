@@ -59,12 +59,10 @@
     <div class="min-h-screen flex items-center justify-center p-4"
          style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)">
         <div class="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12">
-            <!-- Header -->
             <header id="formHeader" class="text-center mb-8">
                 <p class="text-2xl md:text-3xl font-semibold text-gray-700">Statements for Evaluation</p>
                 <p class="text-gray-500 mt-2">Please rate your level of agreement for each statement below.</p>
 
-                <!-- Progress Bar -->
                 <div class="mt-6 text-left">
                     <div class="flex justify-between mb-1">
                         <span class="text-base font-medium text-purple-700">Progress</span>
@@ -85,17 +83,12 @@
                         {
                             @for (int i = 0; i < Model.Count; i++)
                             {
-                                <!-- Statement Card (initially hidden except for the first one) -->
                                 <div id="statement-card-@i" class="statement-card p-6 border border-gray-200 rounded-xl shadow-sm bg-gray-50/50 @(i == 0 ? "" : "hidden")">
                                     <p class="text-xl text-gray-800 mb-5 text-center">
                                         @Model[i].AssertiveStatement
                                     </p>
-
-                                    <!-- Hidden inputs for data binding -->
                                     <input type="hidden" name="Responses[@i].StatementId" value="@Model[i].StatementId" />
                                     <input type="hidden" name="Responses[@i].RelationshipId" value="@ViewData["RelationshipId"]" />
-
-                                    <!-- Rating Buttons -->
                                     <div class="flex flex-wrap justify-center items-center gap-3">
                                         @{
                                             var ratings = new Dictionary<string, int>

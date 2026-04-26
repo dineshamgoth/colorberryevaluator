@@ -118,12 +118,13 @@ namespace BerryTestProject1.Berry.Core
             InteractionFrequency.rarely => 0.90,
             _ => 1.0
         };
-        private static double GetYearsKnownMultiplier(int yearsKnown) => yearsKnown switch
+        /*private static double GetYearsKnownMultiplier(int yearsKnown) => yearsKnown switch
         {
             < 1 => 1.00,
             < 5 => 1.05,
             < 10 => 1.10,
             _ => 1.15
         };
+        */
     }
 }
